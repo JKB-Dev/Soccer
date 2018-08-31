@@ -22,7 +22,7 @@
 		<th>Member Name</th>
 		<th>Member Role</th>
 	</tr>
-	<c:forEach var="team" items="${teamMembers}">
+	<c:forEach var="member" items="${teamMembers}">
 		<tr>
 			<td> ${member.membername} </td>
 			<td> ${member.memberrole }</td>
@@ -30,8 +30,6 @@
 		</tr>
 	</c:forEach>	
 </table>
-
-${thisteam}
 
 </div>
 

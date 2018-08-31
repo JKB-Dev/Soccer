@@ -19,6 +19,10 @@
 	
 	<form method="post">
 		<div class="form-group">
+			<label for="id">ID:</label>
+			<input class="form-control" id="id" name="id" value="${teamid}" required="required" minlength="2" autocomplete="off">
+		</div>
+		<div class="form-group">
 			<label for="name">Name:</label>
 			<input class="form-control" id="name" name="name" value="${team.teamname}" required="required" minlength="2" autocomplete="off">
 		</div>

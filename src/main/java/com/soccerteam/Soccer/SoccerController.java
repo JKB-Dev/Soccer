@@ -110,7 +110,7 @@ public class SoccerController {
 	// item edit page, loads current values
 	@RequestMapping("/team/{id}/edit")
 	public ModelAndView showTeamEdit(@PathVariable("id") Long id) { // path variable is the product selected by user input
-		ModelAndView mv = new ModelAndView("team-edit"); // calls .jsp view
+		ModelAndView mv = new ModelAndView("team-edit", "teamid", id); // calls .jsp view
 		mv.addObject("title", "Edit Team");
 		mv.addObject("item", teamRepo.findById(id).orElse(null)); 
 		return mv;
@@ -119,10 +119,10 @@ public class SoccerController {
 	// save new values from edit page, returns user to home
 	@PostMapping("/team/{id}/edit")
 	public ModelAndView editTeam(Teams team, @RequestParam("id") Long id, @RequestParam("name") String name) { // path variable is the product selected by user input
-		//team.setTeamid(id);	// entity method chooses existing product to modify
+		team.setTeamid(id);	// entity method chooses existing product to modify
 		team.setTeamname(name);
 		teamRepo.save(team);	// calling respository method to save or update
-		return new ModelAndView("redirect:/teamtable"); // return to teams after save
+		return new ModelAndView("redirect:/teams"); // return to teams after save
 		}
 	
 	// view team
