@@ -36,6 +36,9 @@
 	<br>
 	
 	<a class="btn btn-secondary" href="member/create">Add a new Member</a> <!-- href tells controller to call item-add.jsp -->
+	<br>
+	<br>
+	<a class="btn btn-secondary" href="/">home</a>
 
 </div>
 

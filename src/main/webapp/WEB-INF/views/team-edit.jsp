@@ -15,18 +15,20 @@
 
 <div class="container">
 
-	<h1>Edit ${item}</h1>
+	<h1>${item}</h1>
 	
 	<form method="post">
 		<div class="form-group">
-			<label for="id">ID:</label>
-			<input class="form-control" id="id" name="id" value="${teamid}" required="required" minlength="2" autocomplete="off">
+			<input class="form-control" type="hidden" id="teamid" name="teamid" value="${team.teamid}" required="required" autocomplete="off">
 		</div>
 		<div class="form-group">
 			<label for="name">Name:</label>
-			<input class="form-control" id="name" name="name" value="${team.teamname}" required="required" minlength="2" autocomplete="off">
+			<input class="form-control" id="name" name="name" value="${team.teamname}" required="required" autocomplete="off">
 		</div>
-		<button type="submit">Submit</button>
+		<button class="btn btn-secondary" type="submit">Submit</button>
+		<br>
+		<br>
+		<a class="btn btn-secondary" href="/teams">cancel</a>
 	</form>
 
 </div>

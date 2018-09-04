@@ -7,31 +7,32 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>Team View</title>
 <link rel="stylesheet"
 	href="https://stackpath.bootstrapcdn.com/bootswatch/4.1.3/minty/bootstrap.min.css" />
 </head>
 <body>
 
+
 <div class="container">
 
-<h1>${teamname}</h1>
-
-<table border="1">
-	<tr>
-		<th>Member Name</th>
-		<th>Member Role</th>
-	</tr>
-	<c:forEach var="member" items="${teamMembers}">
+	<h1>${teamname}</h1>
+	
+	<table border="1">
 		<tr>
-			<td> ${member.membername} </td>
-			<td> ${member.memberrole }</td>
-			
+			<th>Member Name</th>
+			<th>Member Role</th>
 		</tr>
-	</c:forEach>	
-</table>
+		<c:forEach var="member" items="${teamMembers}">
+			<tr>
+				<td> ${member.membername} </td>
+				<td> ${member.memberrole }</td>
+			</tr>
+		</c:forEach>	
+	</table>
 
 </div>
+
 
 </body>
 </html>

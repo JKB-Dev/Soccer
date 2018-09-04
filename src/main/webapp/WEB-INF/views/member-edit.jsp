@@ -17,17 +17,40 @@
 
 	<h1>Edit ${item}</h1>
 	
+	<fieldset>
+	
 	<form method="post">
 		<div class="form-group">
-			<label for="name">Name:</label>
-			<input class="form-control" id="name" name="name" value="${member.membername}" required="required" minlength="2" autocomplete="off">
+			<input class="form-control" type="hidden" id="id" name="id" value="${member.memberid}" required="required" autocomplete="off">
 		</div>
 		<div class="form-group">
-			<label for="role">Role:</label>
-			<input class="form-control" id="role" name="role" value="${member.memberrole}" required="required" minlength="2" autocomplete="off">
+			<label for="name">Name: ${member.membername}</label>
+			<input class="form-control" id="name" name="name" value="${member.membername}" required="required" autocomplete="off">
 		</div>
-		<button type="submit">Submit</button>
+		
+		<div class="form-group">
+			<label for="role">Role: ${member.memberrole}</label>
+			<input class="form-control" id="role" name="role" value="${member.memberrole}" required="required" autocomplete="off">
+		</div>
+		
+		<div class = dropdown>
+		<label for="teamid">Team: </label>
+			<select name = "teamid">
+				<c:forEach var="teamid" items="${teams}">
+					<option value="${teamid.teamid}">${teamid.teamname}</option>
+				</c:forEach>
+			</select>
+		</div>
+		
+		<br>
+		<br>
+		<button class="btn btn-secondary" type="submit">Submit</button>
 	</form>
+		<br>
+		<br>
+		<a class="btn btn-secondary" href="/members">cancel</a>
+	
+	</fieldset>
 
 </div>
 

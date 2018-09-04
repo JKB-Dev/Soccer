@@ -1,6 +1,8 @@
 package com.soccerteam.Soccer;
 
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -8,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+
 import com.soccerteam.Soccer.dao.SoccerMemberRepo;
 import com.soccerteam.Soccer.dao.SoccerTeamRepo;
 import com.soccerteam.Soccer.entity.Members;
@@ -38,14 +41,16 @@ public class SoccerController {
 	
 	// add-member page
 	@RequestMapping("member/create") // from href
-	public String showMemberAdd() {
-		return "member-add"; // calls member-add.jsp
-		}
+	public ModelAndView showMemberAdd() {
+		ModelAndView mv = new ModelAndView("member-edit"); // calls .jsp
+		mv.addObject("teams", teamRepo.findAll());
+		return mv;
+	}
 	
 	// create new member from user input, returns user to members page
 	@PostMapping("member/create")
-	public ModelAndView addMemberForm(@RequestParam("membername") String name, 
-	@RequestParam("memberrole") String role, @RequestParam("teamid") Teams team) { // member properties to be described
+	public ModelAndView addMemberForm(@RequestParam("name") String name, 
+	@RequestParam("role") String role, @RequestParam("team") Teams team) { // member properties to be described
 		Members member = new Members(name, role, team); // calling ID-less constructor
 		ModelAndView mv = new ModelAndView("redirect:/members"); // return to members page when member is created
 		memberRepo.save(member); // calling respository method to save or update
@@ -59,23 +64,38 @@ public class SoccerController {
 		return new ModelAndView("redirect:/members");
 		}
 	
-	// item edit page, loads current values
+	// member edit page FIXME: load current values as placeholders
 	@RequestMapping("/member/{id}/edit")
-	public ModelAndView showEditForm(@PathVariable("id") Long id) { // path variable is the product selected by user input
+	public ModelAndView showEditForm(@PathVariable("id") Long id) { // path variable is the member selected by user input
 		ModelAndView mv = new ModelAndView("member-edit"); // calls .jsp view
 		mv.addObject("title", "Edit Member");
 		mv.addObject("item", memberRepo.findById(id).orElse(null)); 
+		mv.addObject("teams", teamRepo.findAll());
 		return mv;
 		}	
 	
+//	// FIXME: member edit action page: sometimes updates, but whitepages: "save transient instance before flushing"
+//	@PostMapping("/member/{id}/edit")
+//	public ModelAndView editMember(Members member, Teams team, @PathVariable("id") Long memberId, 
+//			@RequestParam("name") String membername, @RequestParam("role") String memberrole) {
+//		member.setMemberid(memberId);
+//		member.setMembername(membername);
+//		member.setMemberrole(memberrole);
+//		member.setTeam(team);//teamRepo.save(team);
+//		memberRepo.save(member);
+//		teamRepo.save(team);
+//		return new ModelAndView("redirect:/members");
+//	}
+	
+	// based on Ben's solution, "parameter teamid not present"
 	@PostMapping("/member/{id}/edit")
-	public ModelAndView editMember(Members member, @PathVariable("id") Long id, 
-			@PathVariable("membername") String name, @PathVariable("memberrole") String role) {
-		member.setMemberid(id);
-		member.setMembername(name);
-		member.setMemberrole(role);
+	public ModelAndView editMember(@RequestParam("teamid") Long teamid, @PathVariable("id") Long memberId, 
+			@RequestParam("name") String membername, @RequestParam("role") String memberrole) {
+		Optional<Teams> oTeam = teamRepo.findById(teamid);
+		Teams team = oTeam.get();
+		Members member = new Members(memberId, membername, memberrole, team);
 		memberRepo.save(member);
-		return new ModelAndView("redirect:/membertable");
+		return new ModelAndView("redirect:/members");
 	}
 	
 	// view teams
@@ -85,15 +105,17 @@ public class SoccerController {
 		return teamMv;
 		}
 	
-	// add-team page
-	@RequestMapping("team/create") // from href
-	public String showTeamAdd() {
-		return "team-add"; // calls item-add.jsp
-		}	
+	// add team
+	@RequestMapping("team/create")
+	public ModelAndView teamCreate() {
+		ModelAndView create = new ModelAndView("team-edit");
+		create.addObject("item", "Enter new team name:");
+		return create;
+	}
 	
 	// create new team from user input, returns user to teams page
 	@PostMapping("team/create")
-	public ModelAndView addTeamForm(@RequestParam("teamname") String name) {
+	public ModelAndView addTeamForm(@RequestParam("name") String name) {
 		Teams team = new Teams(name, null);
 		ModelAndView mv = new ModelAndView("redirect:/teams");
 		teamRepo.save(team);
@@ -109,7 +131,7 @@ public class SoccerController {
 	
 	// item edit page, loads current values
 	@RequestMapping("/team/{id}/edit")
-	public ModelAndView showTeamEdit(@PathVariable("id") Long id) { // path variable is the product selected by user input
+	public ModelAndView showTeamEdit(@PathVariable("id") Long id) { // path variable is the team selected by user input
 		ModelAndView mv = new ModelAndView("team-edit", "teamid", id); // calls .jsp view
 		mv.addObject("title", "Edit Team");
 		mv.addObject("item", teamRepo.findById(id).orElse(null)); 
@@ -119,20 +141,21 @@ public class SoccerController {
 	// save new values from edit page, returns user to home
 	@PostMapping("/team/{id}/edit")
 	public ModelAndView editTeam(Teams team, @RequestParam("id") Long id, @RequestParam("name") String name) { // path variable is the product selected by user input
-		team.setTeamid(id);	// entity method chooses existing product to modify
+		team.setTeamid(id);	// entity method chooses existing team to modify
 		team.setTeamname(name);
 		teamRepo.save(team);	// calling respository method to save or update
 		return new ModelAndView("redirect:/teams"); // return to teams after save
 		}
 	
-	// view team
+	// view members of any team
 	@RequestMapping("/team/{id}/view")
-	public ModelAndView viewTeam(@PathVariable("id") Long id) {
-		Teams team = teamRepo.getOne(id);
-		String name = team.getTeamname();
-		ModelAndView teamViewMv = new ModelAndView("team-view", "teamname", name);
-		teamViewMv.addObject("teamMembers", teamRepo.getMembersInTeam(id));
-		return teamViewMv;
-		}
+	public ModelAndView viewTeam(@PathVariable("id") Long id, Optional<Teams> teamlist) {
+		teamlist = teamRepo.findById(id);
+		ModelAndView tv = new ModelAndView("team-view");
+		Teams team = teamlist.get();
+		tv.addObject("teamMembers", team.getMembers());
+		return tv;
+		
+	}
 	
 }

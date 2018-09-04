@@ -36,7 +36,9 @@
 	<br>
 	
 	<a class="btn btn-secondary" href="team/create">Add a new Team</a> <!-- href tells controller to call team-add.jsp -->
-
+	<br>
+	<br>
+	<a class="btn btn-secondary" href="/">home</a>
 </div>
 
 </body>
